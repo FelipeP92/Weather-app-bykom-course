@@ -11,7 +11,7 @@ import NotFoundPage from './pages/NotFoundPage'
 const App = () => {
     return (
         <Grid container
-            justify="center"
+            justifyContent="center"
             direction="row">
             <Grid item
                 xs={12} 
