@@ -8,7 +8,7 @@ test('Weather render', async () => {
 
     const temperature = 10
 
-    const { findByRole } = render(<Weather temperature={temperature} state='sunny' />)
+    const { findByRole } = render(<Weather temperature={temperature} state='clear' />)
 
     const temp = await findByRole('heading')
 
