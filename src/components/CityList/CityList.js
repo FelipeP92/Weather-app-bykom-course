@@ -8,6 +8,7 @@ import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import CityInfo from './../CityInfo'
 import Weather from './../Weather'
+import { validValues } from './../IconState/IconState'
 
 const getCityCode = (city, countryCode) => `${city}-${countryCode}`
 
@@ -21,7 +22,7 @@ const renderCityAndCountry = eventOnClickCity => (cityAndCountry, weather) => {
         <ListItem
             button
             key={getCityCode(city, countryCode)} 
-            onClick={eventOnClickCity} >
+            onClick={() => eventOnClickCity(city, countryCode)} >
             <Grid container 
                 justify="center"
                 alignItems="center"
@@ -59,7 +60,9 @@ const CityList = ({ cities, onClickCity }) => {
 
                 const { data } = response
                 const temperature = Number(convertUnits(data.main.temp).from("K").to("C").toFixed(0))
-                const state = data.weather[0].main.toLowerCase()
+                const stateFromServer = data.weather[0].main.toLowerCase()
+
+                const state = validValues.includes(stateFromServer) ? stateFromServer : null // data.weather[0].main.toLowerCase()
     
                 const propName = getCityCode(city, countryCode)
                 const propValue = { temperature, state } // Ej: { temperature: 10, state: "sunny" }

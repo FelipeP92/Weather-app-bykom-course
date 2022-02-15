@@ -9,7 +9,7 @@ const ForecastItem = ({ weekDay, hour, state, temperature }) => {
     return (
         <Grid container
             direction="column"
-            justifyContent="center"
+            justify="center"
             alignItems="center">
             <Grid item>
                 <Typography>{weekDay}</Typography>
@@ -18,7 +18,7 @@ const ForecastItem = ({ weekDay, hour, state, temperature }) => {
                 <Typography>{hour}</Typography>
             </Grid>
             <Grid item>
-                <IconContext.Provider value={{ size: '5em' }}>
+                <IconContext.Provider value={{ size:'5em'}}>
                     <IconState state={state} />
                 </IconContext.Provider>
             </Grid>

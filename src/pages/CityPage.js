@@ -1,5 +1,9 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import Grid from '@material-ui/core/Grid'
+import moment from 'moment'
+import 'moment/locale/es'
+import { useParams } from 'react-router-dom'
 import AppFrame from './../components/AppFrame'
 import CityInfo from './../components/CityInfo'
 import Weather from './../components/Weather'
@@ -41,23 +45,67 @@ const dataExample = [
 ]
 
 const forecastItemListExample = [
-	{ hour: 18, state:"sunny", temperature:17, weekDay:"Jueves" },
-	{ hour: 6, state:"cloud", temperature:18, weekDay:"Viernes" },
-	{ hour: 12, state:"fog", temperature:18, weekDay:"Viernes" },
-	{ hour: 18, state:"cloudy", temperature:19, weekDay:"Viernes" },
-	{ hour: 6, state:"rain", temperature:17, weekDay:"Sábado" },
-	{ hour: 12, state:"rain", temperature:17, weekDay:"Sábado" }, 
+	{ hour: 18, state:"clouds", temperature:17, weekDay:"Jueves" },
+	{ hour: 6, state:"clouds", temperature:18, weekDay:"Viernes" },
+	{ hour: 12, state:"clouds", temperature:18, weekDay:"Viernes" },
+	{ hour: 18, state:"clouds", temperature:19, weekDay:"Viernes" },
+	{ hour: 6, state:"clouds", temperature:17, weekDay:"Sábado" },
+	{ hour: 12, state:"clouds", temperature:17, weekDay:"Sábado" }, 
 ]
 
 const CityPage = () => {
-    const city = "Buenos Aires"
+    const [data, setData] = useState(null)
+    const [forecastItemList, setForecastItemList] = useState(null)
+
+    const { city, countryCode } = useParams()
+
+    useEffect(() => {
+        const getForecast = async () => {
+            const appid = "8e7af3fe4e18cd3730403f0a0a36a861" 
+            const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city},${countryCode}&appid=${appid}`
+
+            try {
+                const { data } = await axios.get(url)
+
+                console.log("data", data)
+
+                const daysAhead = [0, 1, 2, 3, 4, 5]
+                const days = daysAhead.map(d => moment().add(d, 'd'))
+                const dataAux = days.map(day => {
+                    debugger
+                    const tempObjArray = data.list.filter(item => {
+                        const dayOfYear = moment.unix(item.dt).dayOfYear()
+                        return dayOfYear === day.dayOfYear()
+                    })
+                    console.log("day.dayOfYear()", day.dayOfYear())
+                    console.log("tempObjArray", tempObjArray)
+
+                    const temps = tempObjArray.map(item => item.main.temp)
+                    // dayHour, min, max
+                    return ({
+                        dayHour: day.format('ddd'), 
+                        min: Math.min(...temps), 
+                        max: Math.max(...temps)
+                    })
+                })
+                setData(dataAux)
+                setForecastItemList(forecastItemListExample)            
+            } catch (error) {
+                console.log(error)            
+            }
+        }
+
+        getForecast()
+
+    }, [city, countryCode])
+
     const country = "Argentina"
-    const state = "cloudy"
+    const state = "clouds"
     const temperature = 20
     const humidity = 80
     const wind = 5
-    const data = dataExample
-    const forecastItemList = forecastItemListExample
+    // const data = dataExample
+    // const forecastItemList = forecastItemListExample
 
     return (
         <AppFrame>
@@ -78,10 +126,14 @@ const CityPage = () => {
                         wind={wind} />
                 </Grid>
                 <Grid item>
-                    <ForecastChart data={data} />
+                    {
+                        data && <ForecastChart data={data} />
+                    }
                 </Grid>
                 <Grid item>
-                    <Forecast forecastItemList={forecastItemList} />
+                    {
+                        forecastItemList && <Forecast forecastItemList={forecastItemList} />
+                    }
                 </Grid>
             </Grid>        
         </AppFrame>
