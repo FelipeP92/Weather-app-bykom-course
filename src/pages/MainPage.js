@@ -3,32 +3,22 @@ import { useHistory } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper'
 import AppFrame from './../components/AppFrame'
 import CityList from './../components/CityList'
+import { getCities } from './../utils/serviceCities'
 
-const cities = [
-    { city: "Buenos Aires", country: "Argentina", countryCode: "AR"},
-    { city: "Bogotá", country: "Colombia", countryCode: "CO"},
-    { city: "Madrid", country: "España", countryCode: "ES"},
-    { city: "Ciudad de México", country: "México", countryCode: "MX"},
-]
-
-const MainPage = () => {
+const MainPage = ({ onSetAllWeather, allWeather }) => {
     const history = useHistory()
 
     const onClickHandler = (city, countryCode) => {
-        // history.push permite alterar la URL por programación
-        
-        console.log("city", city)
-        console.log("countryCode", countryCode)
-        
-        // /city/AR/Buenos%20Aires
         history.push(`/city/${countryCode}/${city}`)
     }
 
     return (
         <AppFrame>
             <Paper elevation={3}>
-                <CityList 
-                    cities={cities} 
+                <CityList
+                    allWeather={allWeather}
+                    onSetAllWeather={onSetAllWeather} 
+                    cities={getCities()} 
                     onClickCity={onClickHandler} />
             </Paper>
         </AppFrame>

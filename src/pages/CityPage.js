@@ -7,18 +7,18 @@ import Weather from './../components/Weather'
 import WeatherDetails from './../components/WeatherDetails'
 import ForecastChart from './../components/ForecastChart'
 import Forecast from './../components/Forecast'
-import useCityPage from './../hooks/UseCityPage'
-import useCityList from './../hooks/UseCityList'
-import { getCityCode } from '../utils/utils'
+import useCityPage from './../hooks/useCityPage'
+import useCityList from './../hooks/useCityList'
+import { getCityCode } from './../utils/utils'
 import { getCountryNameByCountryCode } from './../utils/serviceCities'
 
-const CityPage = () => {
+const CityPage = ({onSetAllWeather, allWeather}) => {
     const { city, countryCode, chartData, forecastItemList } = useCityPage()
 
     const cities = useMemo(() => ([{ city, countryCode }]), [city, countryCode])
 
-    const { allWeather } = useCityList([{ cities }])
-
+    useCityList(cities, allWeather, onSetAllWeather)
+    
     const weather = allWeather[getCityCode(city, countryCode)]
 
     const country = countryCode && getCountryNameByCountryCode(countryCode)
@@ -34,8 +34,8 @@ const CityPage = () => {
                 justify="space-around"
                 direction="column"
                 spacing={2}>
-                <Grid item container
-                    xs={12}
+                <Grid item container 
+                    xs={12} 
                     justify="center"
                     alignItems="flex-end">
                     <CityInfo city={city} country={country} />
@@ -44,9 +44,9 @@ const CityPage = () => {
                     justify="center">
                     <Weather state={state} temperature={temperature} />
                     {
-                        humidity && wind &&
-                        <WeatherDetails
-                            humidity={humidity}
+                        humidity && wind && 
+                        <WeatherDetails 
+                            humidity={humidity} 
                             wind={wind} />
                     }
                 </Grid>
@@ -65,7 +65,7 @@ const CityPage = () => {
                         forecastItemList && <Forecast forecastItemList={forecastItemList} />
                     }
                 </Grid>
-            </Grid>
+            </Grid>        
         </AppFrame>
     )
 }

@@ -4,16 +4,17 @@ import Alert from '@material-ui/lab/Alert'
 import Grid from '@material-ui/core/Grid'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import useCityList from './../../hooks/UseCityList'
+import useCityList from './../../hooks/useCityList'
 import CityInfo from './../CityInfo'
 import Weather from './../Weather'
-import { getCityCode } from '../../utils/utils'
+import { getCityCode } from './../../utils/utils'
 
 
-
+// li: es un item (según tag html, tiene el role "listitem")
+// renderCityAndCountry se va a convertir en una función que retorna otra función
 const renderCityAndCountry = eventOnClickCity => (cityAndCountry, weather) => {
     const { city, countryCode, country } = cityAndCountry
-    
+    // const { temperature, state } = weather
 
     return (
         <ListItem
@@ -41,9 +42,11 @@ const renderCityAndCountry = eventOnClickCity => (cityAndCountry, weather) => {
     )
 }
 
-const CityList = ({ cities, onClickCity }) => {
+// cities: es un array, y en cada item tiene que tener la ciudad, pero además el country
+// ul: tag html para listas no ordenadas
+const CityList = ({ cities, onClickCity, onSetAllWeather, allWeather }) => {
 
-    const { allWeather, error, setError } = useCityList(cities)
+    const { error, setError } = useCityList(cities, allWeather, onSetAllWeather)
     
     return (
         <div>
