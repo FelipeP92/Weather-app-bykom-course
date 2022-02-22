@@ -1,4 +1,4 @@
-import { toCelsius } from '../utils'
+import { toCelsius } from './../utils'
 import moment from 'moment'
 
 const getChartData = (data) => {

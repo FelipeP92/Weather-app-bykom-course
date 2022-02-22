@@ -1,80 +1,55 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Alert from '@material-ui/lab/Alert'
 import Grid from '@material-ui/core/Grid'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import useCityList from './../../hooks/useCityList'
-import CityInfo from './../CityInfo'
-import Weather from './../Weather'
-import { getCityCode } from './../../utils/utils'
+import ForecastItem from './../ForecastItem'
+import { validValues } from './../IconState/IconState'
 
-
-// li: es un item (según tag html, tiene el role "listitem")
-// renderCityAndCountry se va a convertir en una función que retorna otra función
-const renderCityAndCountry = eventOnClickCity => (cityAndCountry, weather) => {
-    const { city, countryCode, country } = cityAndCountry
-    // const { temperature, state } = weather
-
+const renderForecastItem = forecast => {
+    const { weekDay, hour, state, temperature } = forecast
+    // Hay que poner un identificador único
+    // Vamos a poner una "marca" para encontrar cada item (ForecastItem)
     return (
-        <ListItem
-            button
-            key={getCityCode(city, countryCode)} 
-            onClick={() => eventOnClickCity(city, countryCode)} >
-            <Grid container 
-                justify="center"
-                alignItems="center"
-            >
-                <Grid item
-                    md={9}
-                    xs={12}>
-                    <CityInfo city={city} country={country} />
-                </Grid>
-                <Grid item
-                    md={3}
-                    xs={12}>
-                    <Weather 
-                        temperature={weather && weather.temperature} 
-                        state={weather && weather.state} /> 
-                </Grid>
-            </Grid>
-        </ListItem>
+        <Grid 
+            data-testid="forecast-item-container" 
+            item key={`${weekDay}${hour}`}>
+            <ForecastItem 
+                hour={hour}
+                weekDay={weekDay}
+                state={state}
+                temperature={temperature}
+            ></ForecastItem>
+        </Grid>
     )
 }
 
-// cities: es un array, y en cada item tiene que tener la ciudad, pero además el country
-// ul: tag html para listas no ordenadas
-const CityList = ({ cities, onClickCity, actions, data }) => {
-    const { allWeather } = data
-    // const { onSetAllWeather } = actions
-
-    const { error, setError } = useCityList(cities, allWeather, actions)
-    
+const Forecast = ({ forecastItemList }) => {
     return (
-        <div>
+        <Grid container
+            justify="space-around"
+            alignItems="center">
             {
-                error && <Alert onClose={() => setError(null)} severity="error">{error}</Alert>
+                forecastItemList.map(forecast => renderForecastItem(forecast))
             }
-            <List>
-                {
-                    cities.map(cityAndCountry => renderCityAndCountry(onClickCity)(cityAndCountry, 
-                        allWeather[getCityCode(cityAndCountry.city, cityAndCountry.countryCode)]))
-                }
-            </List>
-        </div>
-
+        </Grid>
     )
 }
 
-CityList.propTypes = {
-    cities: PropTypes.arrayOf(
-        PropTypes.shape({
-            city: PropTypes.string.isRequired,
-            country: PropTypes.string.isRequired,
-            countryCode: PropTypes.string.isRequired,
-        })
-    ).isRequired,
-    onClickCity: PropTypes.func.isRequired,
+// forecastItemList es un array de elementos
+// los elementos deben tener una "forma" en particular
+// las siguientes propiedades:
+/*
+    weekDay: PropTypes.string.isRequired,
+    hour: PropTypes.number.isRequired,
+    state: PropTypes.oneOf(validValues).isRequired,
+    temperature: PropTypes.number.isRequired,
+*/
+Forecast.propTypes = {
+    forecastItemList: PropTypes.arrayOf(PropTypes.shape({
+        weekDay: PropTypes.string.isRequired,
+        hour: PropTypes.number.isRequired,
+        state: PropTypes.oneOf(validValues).isRequired,
+        temperature: PropTypes.number.isRequired,        
+    })).isRequired,
 }
 
-export default CityList
+export default Forecast

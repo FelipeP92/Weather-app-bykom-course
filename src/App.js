@@ -1,20 +1,22 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useCallback } from 'react'
 import { BrowserRouter as Router,
-    Switch, 
+    Routes, 
     Route } from 'react-router-dom'
 import WelcomePage from './pages/WelcomePage'
 import MainPage from './pages/MainPage'
 import CityPage from './pages/CityPage'
 import NotFoundPage from './pages/NotFoundPage'
 
+const initialValue = {
+    allWeather: {},
+    allChartData: {}, 
+    allForecastItemList: {}
+}
+
 const App = () => {
-    const initialValue = {
-        allWeather: {},
-        allChartData: {}, 
-        allForecastItemList: {}
-    }
+
     // action { type: "XXX", payload: "XXX" }
-    const reducer = (state, action) => {
+    const reducer = useCallback((state, action) => {
         switch (action.type) {
             case 'SET_ALL_WEATHER':
                 const weatherCity = action.payload
@@ -31,7 +33,7 @@ const App = () => {
             default:
                 return state 
         }
-    }
+    }, [])
 
     const [state, dispatch] = useReducer(reducer, initialValue)
 
@@ -72,21 +74,20 @@ const App = () => {
     */
     return (
         <Router>
-            <Switch>
-                <Route exact path="/">
-                    <WelcomePage />
-                </Route>
-                <Route path="/main">
-                    <MainPage data={state} actions={dispatch} />
-                </Route>      
-                <Route path="/city/:countryCode/:city">
-                    <CityPage data={state} actions={dispatch} />
-                </Route> 
-                <Route>
-                    <NotFoundPage />
-                </Route>                                                           
-            </Switch>
-        </Router>
+            <Routes>
+                <Route path="/" element={ <WelcomePage />} />
+                   
+                
+                <Route path="/main/*" element={<MainPage data={state} actions={dispatch} />} />
+                    
+
+                <Route path="/city/:countryCode/:city" element={<CityPage data={state} actions={dispatch} />} />
+                    
+                
+                <Route path = '*' element = {<NotFoundPage  />} />
+                                                                            
+            </Routes>
+        </Router> 
     )
 }
 

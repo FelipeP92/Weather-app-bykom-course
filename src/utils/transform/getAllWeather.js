@@ -1,5 +1,5 @@
-import { validValues } from '../../components/IconState/IconState'
-import { getCityCode, toCelsius } from '../utils'
+import { validValues } from './../../components/IconState/IconState'
+import { getCityCode, toCelsius } from './../utils'
 
 const getAllWeather = (response, city, countryCode) => {
     const { data } = response
